@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "86475419983",
+    "firebase_url": "https://ivanchat-60772.firebaseio.com",
+    "project_id": "ivanchat-60772",
+    "storage_bucket": "ivanchat-60772.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86475419983:android:86e2c8b6e3ed917d",
+        "android_client_info": {
+          "package_name": "com.stuttgart.uni.ivanchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86475419983-nhofgn6uo0kb6gvgn9bvhggb8f1lguqn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stuttgart.uni.ivanchat",
+            "certificate_hash": "728c4aa983af90b03482b23e1abc9ed8be27ac0b"
+          }
+        },
+        {
+          "client_id": "86475419983-1qqhqc38d56gkmkg351qojdof72jt82m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfWWJ7hS7NW5iyZuuNIT5pV3u8X2ckixg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86475419983-1qqhqc38d56gkmkg351qojdof72jt82m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
