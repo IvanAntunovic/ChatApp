@@ -39,6 +39,7 @@
         <activity
             android:name=".ProfilePictureActivity"
             android:parentActivityName=".SettingsActivity" />
+        <activity android:name=".ProfileActivity"></activity>
     </application>
 
 </manifest>

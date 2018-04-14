@@ -215,14 +215,7 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
-    @Override
+        @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
@@ -234,8 +227,6 @@ public class SettingsActivity extends AppCompatActivity {
                         .setAspectRatio(1, 1)
                         .setMinCropWindowSize(500, 500)
                         .start(this);
-
-                //Toast.makeText(SettingsActivity.this, imageUri, Toast.LENGTH_LONG).show();
 
             }
 

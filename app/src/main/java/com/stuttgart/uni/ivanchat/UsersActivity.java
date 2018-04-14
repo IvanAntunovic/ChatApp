@@ -73,11 +73,30 @@ public class UsersActivity extends AppCompatActivity {
                 usersViewHolder.setUserStatus(users.getStatus());
                 usersViewHolder.setUserImage(users.getThumb_image(), getApplicationContext());
 
+                final String userId = getRef(position).getKey();
+
+                usersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        startProfileActivity(userId);
+
+                    }
+                });
+
             }
         };
 
-
         mUsersList.setAdapter(firebaseRecyclerAdapter);
+
+    }
+
+    private void startProfileActivity(String userId) {
+
+        Intent profileIntent = new Intent(this, ProfileActivity.class);
+        profileIntent.putExtra(IntentData.USERS_TO_PROFILE_PICTURE_USER_ID, userId);
+        super.startActivity(profileIntent);
 
     }
 
