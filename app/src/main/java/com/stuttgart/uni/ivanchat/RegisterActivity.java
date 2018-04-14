@@ -113,7 +113,9 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseUser currentUser = mAuth.getCurrentUser();
                     String currentUserUid = null;
                     if ( currentUser != null ) {
+
                         currentUserUid = currentUser.getUid();
+
                     }
 
                     mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserUid);

@@ -35,7 +35,10 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".UsersActivity" />
-        <activity android:name=".DisplayNameActivity"></activity>
+        <activity android:name=".DisplayNameActivity" />
+        <activity
+            android:name=".ProfilePictureActivity"
+            android:parentActivityName=".SettingsActivity" />
     </application>
 
 </manifest>

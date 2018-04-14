@@ -7,6 +7,7 @@
     android:background="@color/colorPrimaryDark"
     tools:context=".SettingsActivity">
 
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/settings_image"
         android:layout_width="170dp"
@@ -17,6 +18,7 @@
         android:clickable="true"
         android:src="@drawable/default_avatar" />
 
+
     <TextView
         android:id="@+id/settings_name"
         android:layout_width="wrap_content"
@@ -24,8 +26,8 @@
         android:layout_below="@+id/settings_image"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="Display Name"
         android:clickable="true"
+        android:text="Display Name"
         android:textColor="@android:color/white"
         android:textSize="24sp" />
 
@@ -64,5 +66,16 @@
         android:layout_marginTop="15dp"
         android:text="Hi there, I am using Ivan Chat App"
         android:textColor="@android:color/white" />
+
+    <ImageView
+        android:id="@+id/settings_change_picture"
+        android:layout_width="49dp"
+        android:layout_height="51dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/settings_image"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_camera"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
 </android.widget.RelativeLayout>

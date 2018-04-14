@@ -4,12 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,13 +29,11 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -43,6 +41,7 @@ import id.zelory.compressor.Compressor;
 public class SettingsActivity extends AppCompatActivity {
 
         private static final int GALLERY_PICK = 1;
+        private static final String TAG = "IvanMessage";
 
         private DatabaseReference mUserDatabase;
 
@@ -57,6 +56,9 @@ public class SettingsActivity extends AppCompatActivity {
         private TextView mDisplayStatus;
         private Button mStatusButtton;
         private Button mImageButton;
+        private ImageView mChangePicture;
+
+        private String mProfileImage;
 
         private FirebaseUser mCurrentUser;
 
@@ -64,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
         private StorageReference mImageStorage;
 
         private ProgressDialog mProgressDialog;
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,7 @@ public class SettingsActivity extends AppCompatActivity {
             mDisplayImage = (CircleImageView) findViewById(R.id.settings_image);
             mDisplayName = (TextView) findViewById(R.id.settings_name);
             mDisplayStatus = (TextView) findViewById(R.id.settings_status);
+            mChangePicture = (ImageView) findViewById(R.id.settings_change_picture);
 
             mStatusButtton = (Button) findViewById(R.id.settings_status_btn);
             mImageButton = (Button) findViewById(R.id.settings_image_btn);
@@ -108,21 +112,22 @@ public class SettingsActivity extends AppCompatActivity {
                     if(!image.equals("default")) {
 
                         //Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mDisplayImage);
+                        mProfileImage = image;
 
                         Picasso.with(SettingsActivity.this).load(image).networkPolicy(NetworkPolicy.OFFLINE)
-                                .placeholder(R.drawable.default_avatar).into(mDisplayImage, new Callback() {
-                            @Override
-                            public void onSuccess() {
+                            .placeholder(R.drawable.default_avatar).into(mDisplayImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
 
-                            }
+                        }
 
-                            @Override
-                            public void onError() {
+                        @Override
+                        public void onError() {
 
-                                Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mDisplayImage);
+                            Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mDisplayImage);
 
-                            }
-                        });
+                        }
+                    });
 
                     }
 
@@ -162,7 +167,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    startGalleryActivity();
+                    startProfilePictureActivity();
 
                 }
             });
@@ -183,10 +188,25 @@ public class SettingsActivity extends AppCompatActivity {
 
                 }
             });
+
+            mChangePicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    startGalleryActivity();
+
+                }
+            });
         }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        @Override
+
+    }
+
+    @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
@@ -210,16 +230,13 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if (resultCode == RESULT_OK) {
 
-
                     this.showProgressDialog();
-
 
                     Uri resultUri = result.getUri();
 
                     File thumb_filePath = new File(resultUri.getPath());
 
                     String current_user_id = mCurrentUser.getUid();
-
 
                     Bitmap thumb_bitmap = new Compressor(this)
                             .setMaxWidth(200)
@@ -231,11 +248,8 @@ public class SettingsActivity extends AppCompatActivity {
                     thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     final byte[] thumb_byte = baos.toByteArray();
 
-
                     StorageReference filepath = mImageStorage.child("profile_images").child(current_user_id + ".jpg");
                     final StorageReference thumb_filepath = mImageStorage.child("profile_images").child("thumbs").child(current_user_id + ".jpg");
-
-
 
                     filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -272,7 +286,6 @@ public class SettingsActivity extends AppCompatActivity {
                                                 }
                                             });
 
-
                                         } else {
 
                                             Toast.makeText(SettingsActivity.this, "Error in uploading thumbnail.", Toast.LENGTH_LONG).show();
@@ -284,19 +297,14 @@ public class SettingsActivity extends AppCompatActivity {
                                     }
                                 });
 
-
-
                             } else {
 
                                 Toast.makeText(SettingsActivity.this, "Error in uploading.", Toast.LENGTH_LONG).show();
                                 mProgressDialog.dismiss();
 
                             }
-
                         }
                     });
-
-
 
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
 
@@ -304,8 +312,6 @@ public class SettingsActivity extends AppCompatActivity {
 
                 }
             }
-
-
         }
 
         private void showProgressDialog() {
@@ -341,12 +347,19 @@ public class SettingsActivity extends AppCompatActivity {
 
             final String USER_NAME_KEY_VALUE = "user_name_value";
 
-            Intent statusIntent = new Intent(SettingsActivity.this, DisplayNameActivity.class);
-            statusIntent.putExtra(USER_NAME_KEY_VALUE, currentUserDisplayName);
-            super.startActivity(statusIntent);
+            Intent displayNameIntent = new Intent(SettingsActivity.this, DisplayNameActivity.class);
+            displayNameIntent.putExtra(USER_NAME_KEY_VALUE, currentUserDisplayName);
+            super.startActivity(displayNameIntent);
 
         }
 
+        private void startProfilePictureActivity() {
+
+            Intent profilePictureIntent = new Intent(SettingsActivity.this, ProfilePictureActivity.class);
+            profilePictureIntent.putExtra(IntentData.SETTINGS_TO_PROFILE_PICTURE_DISPLAY_IMAGE, mProfileImage);
+            super.startActivity(profilePictureIntent);
+
+        }
 
         private void storeImage(Uri resultUri) {
 
@@ -368,7 +381,6 @@ public class SettingsActivity extends AppCompatActivity {
 
             StorageReference filePath = mImageStorage.child("profile_images").child(currentUserId + ".jpg");
             final StorageReference thumb_filepath = mImageStorage.child("profile_images").child("thumbs").child(current_user_id + ".jpg");
-
 
             filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
