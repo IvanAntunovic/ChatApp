@@ -7,4 +7,5 @@ public class UserRequest {
     public static final String RECEIVED = "received";
     public static final String NOT_FRIENDS = "not_friends";
     public static final String REQUEST_RECEIVED = "req_received";
+
 }
