@@ -11,8 +11,6 @@ public class Users {
     public String status;
     public String thumb_image;
 
-
-
     public Users(){
 
     }

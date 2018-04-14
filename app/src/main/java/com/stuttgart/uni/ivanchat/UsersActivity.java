@@ -51,7 +51,14 @@ public class UsersActivity extends AppCompatActivity {
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(mLayoutManager);
 
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                finish();
+
+            }
+        });
     }
 
     @Override

@@ -64,33 +64,33 @@ public class StatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-            // Progress
-            mProgressDialog = new ProgressDialog(StatusActivity.this);
-            mProgressDialog.setTitle("Saving changes");
-            mProgressDialog.setMessage("Please wait");
-            mProgressDialog.show();
+                // Progress
+                mProgressDialog = new ProgressDialog(StatusActivity.this);
+                mProgressDialog.setTitle("Saving changes");
+                mProgressDialog.setMessage("Please wait");
+                mProgressDialog.show();
 
-            String status = mStatus.getEditText().getText().toString();
+                String status = mStatus.getEditText().getText().toString();
 
-            mStatusDatabase.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                mStatusDatabase.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
 
-                    if(task.isSuccessful()) {
+                        if(task.isSuccessful()) {
 
-                        mProgressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(), "Thanks dude for keeping me updated with your new status", Toast.LENGTH_LONG).show();
+                            mProgressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Thanks dude for keeping me updated with your new status", Toast.LENGTH_LONG).show();
 
-                        startSettingsActivity();
+                            startSettingsActivity();
 
-                    } else {
+                        } else {
 
-                        String errorMessage = task.getException().getMessage();
-                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+                            String errorMessage = task.getException().getMessage();
+                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
 
+                        }
                     }
-                }
-            });
+                });
             }
     });
 
