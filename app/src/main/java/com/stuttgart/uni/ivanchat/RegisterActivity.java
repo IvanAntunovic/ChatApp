@@ -121,10 +121,10 @@ public class RegisterActivity extends AppCompatActivity {
                     String device_token = FirebaseInstanceId.getInstance().getToken();
 
                     HashMap<String, String> userMap = new HashMap<>();
-                    userMap.put("name", displayName);
-                    userMap.put("status", "Hi there I'm using Ivan Chat App.");
-                    userMap.put("image", "default");
-                    userMap.put("thumb_image", "default");
+                    userMap.put(UserData.NAME_DEFAULT_VALUE, displayName);
+                    userMap.put(UserData.STATUS_DEFAULT_VALUE, "Hi there I'm using Ivan Chat App.");
+                    userMap.put(UserData.IMAGE_DEFAULT_VALUE, "default");
+                    userMap.put(UserData.THUMB_IMAGE_DEFAULT_VALUE, "default");
                     userMap.put("device_token", device_token);
 
                     mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -30,18 +30,18 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        mToolbar = findViewById(R.id.main_page_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Ivan's Chat");
 
         // tabs
-        mViewPager = findViewById(R.id.main_tabPager);
+        mViewPager = (ViewPager) findViewById(R.id.main_tabPager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(super.getSupportFragmentManager());
 
         // Set adapter for View Pager
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mTabLayout = findViewById(R.id.main_tabs);
+        mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (currentUser == null) {
 
-            this.openStartActivity();
+            this.startStartActivity();
         }
     }
 
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 if (this.mAuth.getCurrentUser() == null) {
 
                     Toast.makeText(MainActivity.this, "You are signed out.", Toast.LENGTH_SHORT).show();
-                    this.openStartActivity();
+                    this.startStartActivity();
 
                 }
                 break;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void openStartActivity() {
+    private void startStartActivity() {
 
         Intent startIntent = new Intent(this, StartActivity.class);
         super.startActivity(startIntent);

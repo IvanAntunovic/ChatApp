@@ -1,6 +1,5 @@
 package com.stuttgart.uni.ivanchat;
 
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -50,6 +50,71 @@ public class UsersActivity extends AppCompatActivity {
         mUsersList = (RecyclerView) findViewById(R.id.users_list);
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(mLayoutManager);
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseRecyclerAdapter<Users, UsersViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Users, UsersViewHolder>(
+
+                Users.class,
+                R.layout.users_single_layout,
+                UsersViewHolder.class,
+                mUsersDatabase
+
+        ) {
+            @Override
+            protected void populateViewHolder(UsersViewHolder usersViewHolder, Users users, int position) {
+
+                usersViewHolder.setDisplayName(users.getName());
+                usersViewHolder.setUserStatus(users.getStatus());
+                usersViewHolder.setUserImage(users.getThumb_image(), getApplicationContext());
+
+            }
+        };
+
+
+        mUsersList.setAdapter(firebaseRecyclerAdapter);
+
+    }
+
+
+    public static class UsersViewHolder extends RecyclerView.ViewHolder {
+
+        View mView;
+
+        public UsersViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
+
+        }
+
+        public void setDisplayName(String name){
+
+            TextView userNameView = (TextView) mView.findViewById(R.id.user_single_name);
+            userNameView.setText(name);
+
+        }
+
+        public void setUserStatus(String status){
+
+            TextView userStatusView = (TextView) mView.findViewById(R.id.user_single_status);
+            userStatusView.setText(status);
+
+
+        }
+
+        public void setUserImage(String thumb_image, Context ctx){
+
+            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.user_single_image);
+
+            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
+
+        }
 
 
     }

@@ -25,6 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:text="Display Name"
+        android:clickable="true"
         android:textColor="@android:color/white"
         android:textSize="24sp" />
 
