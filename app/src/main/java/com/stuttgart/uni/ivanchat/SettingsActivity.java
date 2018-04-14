@@ -143,6 +143,21 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
+                String currentUserStatusValue = null;
+
+                if (mDisplayStatus != null) {
+
+                    currentUserStatusValue = mDisplayStatus.getText().toString();
+                    startStatusActivity(currentUserStatusValue);
+
+                }
+                }
+            });
+
+            mDisplayStatus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
                     String currentUserStatusValue = null;
 
                     if (mDisplayStatus != null) {
@@ -151,6 +166,7 @@ public class SettingsActivity extends AppCompatActivity {
                         startStatusActivity(currentUserStatusValue);
 
                     }
+
                 }
             });
 
@@ -331,6 +347,7 @@ public class SettingsActivity extends AppCompatActivity {
             Intent statusIntent = new Intent(SettingsActivity.this, StatusActivity.class);
             statusIntent.putExtra(STATUS_KEY_VALUE, currentUserStatus);
             super.startActivity(statusIntent);
+            super.finish();
         }
 
         private void startGalleryActivity() {
@@ -350,7 +367,7 @@ public class SettingsActivity extends AppCompatActivity {
             Intent displayNameIntent = new Intent(SettingsActivity.this, DisplayNameActivity.class);
             displayNameIntent.putExtra(USER_NAME_KEY_VALUE, currentUserDisplayName);
             super.startActivity(displayNameIntent);
-
+            super.finish();
         }
 
         private void startProfilePictureActivity() {
@@ -415,6 +432,7 @@ public class SettingsActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
+
                                 } else {
 
                                     Toast.makeText(SettingsActivity.this, "Error in uploading thumbnail.", Toast.LENGTH_LONG).show();

@@ -1,6 +1,7 @@
 package com.stuttgart.uni.ivanchat;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +58,15 @@ public class DisplayNameActivity extends AppCompatActivity {
         String currentUserDisplayName = getIntent().getStringExtra(USER_NAME_KEY_VALUE);
         mUserName.getEditText().setText(currentUserDisplayName);
 
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+
+            }
+        });
+
         mSaveUserNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +88,8 @@ public class DisplayNameActivity extends AppCompatActivity {
                             mProgressDialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Dude you have just got new name.", Toast.LENGTH_LONG).show();
 
+                            startSettingsActivity();
+
                         } else {
 
                             String errorMessage = task.getException().getMessage();
@@ -89,6 +101,14 @@ public class DisplayNameActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void startSettingsActivity() {
+
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        super.startActivity(settingsIntent);
+        super.finish();
 
     }
 }
