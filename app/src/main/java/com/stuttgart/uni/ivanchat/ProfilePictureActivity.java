@@ -6,6 +6,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -16,6 +22,7 @@ public class ProfilePictureActivity extends AppCompatActivity {
 
     private ImageView mDisplayImage;
     private Toolbar mToolbar;
+    private DatabaseReference mFriendDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +40,34 @@ public class ProfilePictureActivity extends AppCompatActivity {
 
         }
 
-        String profilePicture = getIntent().getStringExtra(IntentData.SETTINGS_TO_PROFILE_PICTURE_DISPLAY_IMAGE);
-        Picasso.with(ProfilePictureActivity.this).load(profilePicture).placeholder(R.drawable.default_avatar).into(mDisplayImage);
+        mFriendDatabase = FirebaseDatabase.getInstance().getReference()
+                .child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());;
 
-        PhotoViewAttacher photoView = new PhotoViewAttacher(mDisplayImage);
-        photoView.update();
+        mFriendDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot != null) {
+
+                    // Update picture in the profile view
+                    String displayName = dataSnapshot.child(UserData.NAME_DEFAULT_VALUE).getValue().toString();
+                    String status = dataSnapshot.child(UserData.STATUS_DEFAULT_VALUE).getValue().toString();
+                    String image = dataSnapshot.child(UserData.IMAGE_DEFAULT_VALUE).getValue().toString();
+
+                    Picasso.with(ProfilePictureActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mDisplayImage);
+                    PhotoViewAttacher photoView = new PhotoViewAttacher(mDisplayImage);
+                    photoView.update();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
 
     }
 }

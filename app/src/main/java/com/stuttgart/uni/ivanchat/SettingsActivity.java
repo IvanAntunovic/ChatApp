@@ -94,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(current_uid);
+            // Enable offline capability
             mUserDatabase.keepSynced(true);
 
             mUserDatabase.addValueEventListener(new ValueEventListener() {
@@ -117,13 +118,14 @@ public class SettingsActivity extends AppCompatActivity {
                         Picasso.with(SettingsActivity.this).load(image).networkPolicy(NetworkPolicy.OFFLINE)
                             .placeholder(R.drawable.default_avatar).into(mDisplayImage, new Callback() {
                         @Override
-                        public void onSuccess() {
+                        public void onSuccess() { // If image has been retrieved offline
 
                         }
 
                         @Override
-                        public void onError() {
+                        public void onError() { // If image has been NOT been retrieved offline
 
+                            // Try to load image online
                             Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mDisplayImage);
 
                         }
