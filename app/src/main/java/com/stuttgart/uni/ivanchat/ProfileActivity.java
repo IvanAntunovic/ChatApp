@@ -131,6 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void startProgressDialog() {
 
+        // Dialog
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("Loading User Data");
         mProgressDialog.setMessage("Please wait while we load user data.");
