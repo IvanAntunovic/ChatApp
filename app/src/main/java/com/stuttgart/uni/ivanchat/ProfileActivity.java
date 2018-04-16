@@ -24,7 +24,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "IvanMessage";
 
     private ImageView mProfileImage;
-    private TextView mProfileName, mProfileStatus, mProfileFriendsCount;
+    private TextView mProfileName, mProfileStatus, mProfileFriendsCount, mProfileFriendsText;
     private Button mProfileSendReqBtn, mDeclineBtn;
 
     private ProgressDialog mProgressDialog;
@@ -51,12 +51,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        mUserRequestManager = new UserRequestManager(
-                mUsersDatabase,
-                mFriendRequestDatabase,
-                mFriendDatabase,
-                mNotificationDatabase
-        );
+        mProfileFriendsText = (TextView) findViewById(R.id.profile_friends_textView);
+        mProfileFriendsText.setVisibility(View.INVISIBLE);
 
         mProfileImage = (ImageView) findViewById(R.id.profile_image);
         mProfileName = (TextView) findViewById(R.id.profile_displayName);
@@ -64,6 +60,16 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileFriendsCount = (TextView) findViewById(R.id.profile_totalFriends);
         mProfileSendReqBtn = (Button) findViewById(R.id.profile_send_req_btn);
         mDeclineBtn = (Button) findViewById(R.id.profile_decline_btn);
+
+        mUserRequestManager = new UserRequestManager(
+                mUsersDatabase,
+                mFriendRequestDatabase,
+                mFriendDatabase,
+                mNotificationDatabase,
+                mProfileSendReqBtn,
+                mDeclineBtn,
+                mProfileFriendsText
+        );
 
         this.startProgressDialog();
 
@@ -87,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        if (dataSnapshot.hasChild(user_id)) { // Selected user exits under "Freiend_req" root in database
+                        if (dataSnapshot.hasChild(user_id)) { // Selected user exits under "Friend_req" root in database
 
                             String currentUserId = mCurrentUser.getUid();
                             String requestType = dataSnapshot.child(user_id).child(UserRequest.TYPE).getValue().toString();
@@ -110,7 +116,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                     }
                 });
-
             }
 
             @Override

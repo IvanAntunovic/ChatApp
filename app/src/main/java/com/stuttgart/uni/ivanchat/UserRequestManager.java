@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +32,7 @@ public class UserRequestManager {
     private DatabaseReference mFriendDatabase;
     private DatabaseReference mNotificationDatabase;
 
+    private TextView mProfileFriendsText;
     private Button mProfileSendReqBtn, mDeclineBtn;
 
     public static final int RECEIVED = 0;
@@ -46,12 +48,19 @@ public class UserRequestManager {
     public UserRequestManager(DatabaseReference usersDatabase,
                               DatabaseReference friendRequestDatabase,
                               DatabaseReference friendDatabase,
-                              DatabaseReference notificationDatabase) {
+                              DatabaseReference notificationDatabase,
+                              Button profileSendReqBtn,
+                              Button declineBtn,
+                              TextView profileFriendsText) {
 
         this.mUsersDatabase = usersDatabase;
         this.mFriendRequestDatabase = friendRequestDatabase;
         this.mFriendDatabase = friendDatabase;
         this.mNotificationDatabase = notificationDatabase;
+
+        this.mProfileSendReqBtn = profileSendReqBtn;
+        this.mDeclineBtn = declineBtn;
+        this.mProfileFriendsText = profileFriendsText;
 
         mCurrentState = this.NOT_FRIENDS;
 
@@ -303,6 +312,8 @@ public class UserRequestManager {
                 // Check whether the current profile we are on, exists or not
                 if (dataSnapshot.hasChild(userId)) {
 
+                    mProfileFriendsText.setText("You are Friends with this person");
+                    mProfileFriendsText.setVisibility(View.VISIBLE);
                     // if it's true, current user is already friend with the current profile we are on
                     mCurrentState = FRIENDS;
                     profileSendReqBtn.setText("Unfriend this Person");
@@ -310,6 +321,11 @@ public class UserRequestManager {
                     // Already friends, thus hide "Deciline Friend Request" Button
                     declineBtn.setVisibility(View.INVISIBLE);
                     declineBtn.setEnabled(false);
+
+                } else {
+
+                    mProfileFriendsText.setVisibility(View.VISIBLE);
+
                 }
             }
 

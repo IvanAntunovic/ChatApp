@@ -72,5 +72,17 @@
         android:text="DECLINE FRIEND REQUEST"
         android:textColor="@android:color/white" />
 
+    <TextView
+        android:id="@+id/profile_friends_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="177dp"
+        android:text="You are not Friends with this Person"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:visibility="visible" />
+
 
 </RelativeLayout>
