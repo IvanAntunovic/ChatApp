@@ -4,15 +4,12 @@ import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,9 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 public class ProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "IvanMessage";
 
     private ImageView mProfileImage;
     private TextView mProfileName, mProfileStatus, mProfileFriendsCount;
@@ -45,11 +42,11 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        final String userId = getIntent().getStringExtra(IntentData.USERS_TO_PROFILE_PICTURE_USER_ID);
+        final String user_id = getIntent().getStringExtra(IntentData.USERS_TO_PROFILE_PICTURE_USER_ID);
 
         mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
         mFriendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req");
-        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
         mNotificationDatabase = FirebaseDatabase.getInstance().getReference().child("notifications");
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -59,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
                 mFriendRequestDatabase,
                 mFriendDatabase,
                 mNotificationDatabase
-                );
+        );
 
         mProfileImage = (ImageView) findViewById(R.id.profile_image);
         mProfileName = (TextView) findViewById(R.id.profile_displayName);
@@ -82,21 +79,25 @@ public class ProfileActivity extends AppCompatActivity {
                 mProfileStatus.setText(status);
                 Picasso.with(ProfileActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mProfileImage);
 
+                mUserRequestManager.checkIfCurrentUserSelected(mCurrentUser, user_id, mDeclineBtn, mProfileSendReqBtn);
+
                 //--------------- FRIENDS LIST / REQUEST FEATURE -----
 
                 mFriendRequestDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        if (dataSnapshot.hasChild(userId)) {
+                        if (dataSnapshot.hasChild(user_id)) { // Selected user exits under "Freiend_req" root in database
 
-                            String requestType = dataSnapshot.child(userId).child(UserRequest.TYPE).toString();
+                            String currentUserId = mCurrentUser.getUid();
+                            String requestType = dataSnapshot.child(user_id).child(UserRequest.TYPE).getValue().toString();
 
-                            mUserRequestManager.manageButton(mProfileSendReqBtn, mDeclineBtn, requestType);
+                            // Check if request has been received or sent, and adjust button text accordingly
+                            mUserRequestManager.checkIfRequestSent(mProfileSendReqBtn, mDeclineBtn, requestType);
 
                         } else {
 
-                            mUserRequestManager.checkIfFriends(mProfileSendReqBtn, mCurrentUser ,userId);
+                            mUserRequestManager.checkIfFriends(mProfileSendReqBtn, mDeclineBtn, mCurrentUser, user_id);
 
                         }
 
@@ -122,10 +123,18 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                mUserRequestManager.manageRequest(ProfileActivity.this, mCurrentUser, userId, mProfileSendReqBtn, mDeclineBtn);
+                mUserRequestManager.manageRequest(ProfileActivity.this, mCurrentUser, user_id, mProfileSendReqBtn, mDeclineBtn);
 
             }
         });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i(TAG, "ProfileActivity.onResume()");
 
     }
 

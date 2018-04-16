@@ -2,6 +2,7 @@ package com.stuttgart.uni.ivanchat;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,18 +14,24 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 public class UserRequestManager {
+
+    private final static String TAG = "IvanMessage";
 
     private DatabaseReference mUsersDatabase;
     private DatabaseReference mFriendRequestDatabase;
     private DatabaseReference mFriendDatabase;
     private DatabaseReference mNotificationDatabase;
+
+    private Button mProfileSendReqBtn, mDeclineBtn;
 
     public static final int RECEIVED = 0;
     public static final int REQUEST_SENT = 1;
@@ -151,6 +158,41 @@ public class UserRequestManager {
             }
             break;
 
+            case FRIENDS: {
+
+                Map unfriendMap = new HashMap();
+                unfriendMap.put("Friends/" + currentUser.getUid() + "/" + targetUserId, null);
+                unfriendMap.put("Friends/" + targetUserId + "/" + currentUser.getUid(), null);
+
+                FirebaseDatabase.getInstance().getReference().updateChildren(unfriendMap, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                        if(databaseError == null){
+
+                            mCurrentState = NOT_FRIENDS;
+                            profileSendReqBtn.setText("Send Friend Request");
+
+                            declineBtn.setVisibility(View.INVISIBLE);
+                            declineBtn.setEnabled(false);
+
+                        } else {
+
+                            String error = databaseError.getMessage();
+
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        profileSendReqBtn.setEnabled(true);
+
+                    }
+                });
+
+
+            }
+            break;
+
             default:
                 break;
         }
@@ -182,7 +224,14 @@ public class UserRequestManager {
 
     }
 
-    public void manageButton(Button requestButton, Button declineBtn, String requestType) {
+    /**
+     *
+     * @param requestButton
+     * @param declineBtn
+     * @param requestType
+     */
+
+    public void checkIfRequestSent(Button requestButton, Button declineBtn, String requestType) {
 
         if (requestType.equals(UserRequest.RECEIVED)) {
 
@@ -204,7 +253,48 @@ public class UserRequestManager {
 
     }
 
-    public void checkIfFriends(final Button mProfileSendReqBtn, final FirebaseUser mCurrentUser, final String userId) {
+    public void checkIfCurrentUserSelected(FirebaseUser currentUser, String selectedUserId, Button declineButton, Button profileSendReqButton) {
+
+        if(currentUser.getUid().equals(selectedUserId)){
+
+            declineButton.setEnabled(false);
+            declineButton.setVisibility(View.INVISIBLE);
+
+            profileSendReqButton.setEnabled(false);
+            profileSendReqButton.setVisibility(View.INVISIBLE);
+
+        }
+
+    }
+
+    public void isFriends(final FirebaseUser mCurrentUser, final String userId) {
+
+        mFriendDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                // Check whether the current profile we are on, exists or not
+                if (dataSnapshot.hasChild(userId)) {
+
+                    // if it's true, current user is already friend with the current profile we are on
+                    Log.i(TAG,"Friends");
+
+                } else {
+
+                    Log.i(TAG,"Not friends");
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void checkIfFriends(final Button profileSendReqBtn, final Button declineBtn, final FirebaseUser mCurrentUser, final String userId) {
 
         mFriendDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -215,8 +305,11 @@ public class UserRequestManager {
 
                     // if it's true, current user is already friend with the current profile we are on
                     mCurrentState = FRIENDS;
-                    mProfileSendReqBtn.setText("Unfriend this Person");
+                    profileSendReqBtn.setText("Unfriend this Person");
 
+                    // Already friends, thus hide "Deciline Friend Request" Button
+                    declineBtn.setVisibility(View.INVISIBLE);
+                    declineBtn.setEnabled(false);
                 }
             }
 
@@ -225,5 +318,10 @@ public class UserRequestManager {
 
             }
         });
+    }
+
+    public void adjustButtons() {
+
+
     }
 }
